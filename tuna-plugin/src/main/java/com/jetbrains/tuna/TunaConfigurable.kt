@@ -6,7 +6,8 @@ import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.project.Project
-import com.intellij.ui.layout.panel
+import com.intellij.ui.components.JBTextField
+import com.intellij.ui.layout.*
 import com.intellij.util.io.HttpRequests
 import com.jetbrains.tuna.oauth.Server
 import org.jetbrains.annotations.Nls
@@ -17,7 +18,7 @@ import javax.swing.JComponent
 
 
 class TunaConfigurable(val myProject: Project) : Configurable {
-  var myAccessToken: String? = null
+  val myAccessTokenField = JBTextField()
 
   @Nls(capitalization = Nls.Capitalization.Title)
   override fun getDisplayName(): String {
@@ -26,15 +27,15 @@ class TunaConfigurable(val myProject: Project) : Configurable {
 
   override fun createComponent(): JComponent? {
     return panel {
+      row("Access token:") { myAccessTokenField(CCFlags.pushX) }
       row {
         link("Authorize in Slack") {
-          val s = TunaAppInfo.CLIENT_ID
           BrowserUtil.open("${TunaAppInfo.OAUTH_AUTHORIZE_URL}?" +
-                           "client_id=${urlEncode(s)}&" +
+                           "client_id=${urlEncode(TunaAppInfo.CLIENT_ID)}&" +
                            "scope=incoming-webhook&" +
                            "redirect_uri=${urlEncode(TunaAppInfo.REDIRECT_URI)}")
 
-          myAccessToken = interceptCodeAndRequestToken()
+          myAccessTokenField.text = interceptCodeAndRequestToken()
         }
       }
     }
@@ -52,7 +53,6 @@ class TunaConfigurable(val myProject: Project) : Configurable {
   }
 
   private fun requestToken(code: String): String? {
-//    val code = "387915614917.388797643460.9b444b2b0a5205627e727a6e5fcda634478e19c39de3ddeede29bdfdc9665bc2"
     val gson = GsonBuilder().create()
     val payload = hashMapOf(
       "client_id" to "387915614917.388681237990",
@@ -82,21 +82,21 @@ class TunaConfigurable(val myProject: Project) : Configurable {
   }
 
 
+  private fun urlEncode(s: String) = URLEncoder.encode(s, StandardCharsets.UTF_8.name())
+
   override fun reset() {
     val component = TunaProjectComponent.getInstance(myProject)
-    myAccessToken = component.state?.myAccessToken
+    myAccessTokenField.text = component.state?.myAccessToken
   }
-
-  private fun urlEncode(s: String) = URLEncoder.encode(s, StandardCharsets.UTF_8.name())
 
   override fun isModified(): Boolean {
     val component = TunaProjectComponent.getInstance(myProject)
-    return component.state?.myAccessToken != myAccessToken
+    return component.state?.myAccessToken != myAccessTokenField.text
   }
 
   @Throws(ConfigurationException::class)
   override fun apply() {
     val component = TunaProjectComponent.getInstance(myProject)
-    component.state?.myAccessToken = myAccessToken
+    component.state?.myAccessToken = myAccessTokenField.text
   }
 }

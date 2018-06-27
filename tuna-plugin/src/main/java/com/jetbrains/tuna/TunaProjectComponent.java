@@ -17,7 +17,7 @@ public class TunaProjectComponent implements ProjectComponent, PersistentStateCo
     @NotNull
     private TunaNotificationManager myNotificationManager;
 
-    private Config myConfig;
+    private Config myConfig = new Config();
 
     TunaProjectComponent(@NotNull Project project) {
         myProject = project;
