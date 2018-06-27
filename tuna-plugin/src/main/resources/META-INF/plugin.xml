@@ -14,12 +14,12 @@
     -->
 
     <extensions defaultExtensionNs="com.intellij">
-        <!-- Add your extensions here -->
+        <projectConfigurable displayName="TUNA" id="tuna" instance="com.jetbrains.tuna.TunaConfigurable"/>
     </extensions>
 
     <project-components>
         <component>
-            <implementation-class>TunaProjectComponent</implementation-class>
+            <implementation-class>com.jetbrains.tuna.TunaProjectComponent</implementation-class>
         </component>
     </project-components>
 </idea-plugin>
