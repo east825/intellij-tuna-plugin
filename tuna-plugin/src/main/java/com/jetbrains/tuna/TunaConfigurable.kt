@@ -4,11 +4,9 @@ import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Ref
-import com.intellij.ui.layout.*
-import com.sun.net.httpserver.HttpServer
+import com.intellij.ui.layout.panel
+import com.jetbrains.tuna.oauth.Server
 import org.jetbrains.annotations.Nls
-import java.net.InetSocketAddress
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import javax.swing.JComponent
@@ -39,22 +37,15 @@ class TunaConfigurable(val myProject: Project) : Configurable {
   }
 
   private fun interceptCodeAndRequestToken(): String? {
-    val code: Ref<String> = Ref.create()
-    // TODO use normal HTTP server for this purpose, e.g. Netty
-    val server = HttpServer.create(InetSocketAddress(8000), 0)
-    server.createContext("/oauth/callback") {
-      code.set(it.requestURI.query.split("&")
-                 .firstOrNull() { it.startsWith("code=") }
-                 ?.removePrefix("code="))
-      // TODO send response back to the browser
-      server.stop(0)
+    val server = Server.start(8000)
+    try {
+      val code = server.getCode()
+
+      // todo request token
+      return null
+    } finally {
+      server.shutdown()
     }
-    server.executor = null
-    server.start()
-    if (!code.isNull) {
-      // Request Access Token
-    }
-    return null
   }
 
   override fun reset() {
