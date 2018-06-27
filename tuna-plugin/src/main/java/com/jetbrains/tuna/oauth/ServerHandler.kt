@@ -23,4 +23,6 @@ class ServerHandler : SimpleChannelInboundHandler<FullHttpMessage>() {
       }
     }
   }
+
+  override fun isSharable(): Boolean = true
 }

@@ -8,10 +8,9 @@ import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.project.Project
 import com.intellij.ui.components.JBTextField
 import com.intellij.ui.layout.*
-import com.intellij.util.io.HttpRequests
+import com.jetbrains.tuna.oauth.ClientRequest
 import com.jetbrains.tuna.oauth.Server
 import org.jetbrains.annotations.Nls
-import java.net.HttpURLConnection
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import javax.swing.JComponent
@@ -55,30 +54,25 @@ class TunaConfigurable(val myProject: Project) : Configurable {
   private fun requestToken(code: String): String? {
     val gson = GsonBuilder().create()
     val payload = hashMapOf(
-      "client_id" to "387915614917.388681237990",
-      "client_secret" to "3dbdbd7210ef6d86f76a155c6bba8cb6",
+      "client_id" to TunaAppInfo.CLIENT_ID,
+      "client_secret" to TunaAppInfo.CLIENT_SECRET,
       "code" to code,
-      "redirect_uri" to "http://localhost:8000/oauth/callback"
+      "redirect_uri" to TunaAppInfo.REDIRECT_URI
     )
+
     val formEncoded = payload.entries
       .map { "${urlEncode(it.key)}=${urlEncode(it.value)}" }
       .joinToString(separator = "&")
-    return HttpRequests.request("https://slack.com/api/oauth.access")
-      .tuner {
-        if (it is HttpURLConnection) {
-          it.doOutput = true
-          it.requestMethod = "POST"
-        }
-      }
-      .connect { request ->
-        val writer = (request.connection as HttpURLConnection).outputStream.bufferedWriter()
-        writer.write(formEncoded)
-        writer.flush()
 
-        //      println(request.readString(null))
-        val json = gson.fromJson(request.reader, JsonElement::class.java).asJsonObject
-        return@connect json["access_token"].asString
-      }
+    println("Request: $formEncoded")
+
+    val response = ClientRequest().post("https://slack.com/api/oauth.access", formEncoded)
+
+    val responseContent = response.content().toString(Charsets.UTF_8)
+
+    println("Response: $responseContent")
+    val json = gson.fromJson(responseContent, JsonElement::class.java).asJsonObject
+    return json["access_token"].asString
   }
 
 
