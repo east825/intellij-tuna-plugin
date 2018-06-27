@@ -1,5 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="tuna-plugin [runIde]" type="GradleRunConfiguration" factoryName="Gradle" singleton="true">
+    <log_file alias="$PROJECT_DIR$/build/idea-sandbox/system/log/idea.log" path="$PROJECT_DIR$/build/idea-sandbox/system/log/idea.log" />
     <ExternalSystemSettings>
       <option name="executionName" />
       <option name="externalProjectPath" value="$PROJECT_DIR$" />
