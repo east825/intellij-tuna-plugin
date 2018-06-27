@@ -8,6 +8,10 @@ import org.jetbrains.annotations.Nullable;
 
 @State(name = "TunaConfig", storages = @Storage(StoragePathMacros.WORKSPACE_FILE))
 public class TunaProjectComponent implements ProjectComponent, PersistentStateComponent<TunaProjectComponent.Config> {
+    public static TunaProjectComponent getInstance(@NotNull Project project) {
+        return project.getComponent(TunaProjectComponent.class);
+    }
+
     @NotNull
     private Project myProject;
     @NotNull
@@ -38,6 +42,6 @@ public class TunaProjectComponent implements ProjectComponent, PersistentStateCo
     }
 
     static class Config {
-        private String myAccessToken;
+        public String myAccessToken;
     }
 }
