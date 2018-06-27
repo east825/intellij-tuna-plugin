@@ -64,6 +64,11 @@ public class TunaProjectComponent implements ProjectComponent, PersistentStateCo
   }
 
   @Nullable
+  public SlackMessages getSlackMessages() {
+    return mySlackSession != null && mySlackSession.isConnected() ? new SlackMessages(mySlackSession) : null;
+  }
+
+  @Nullable
   public String getAccessToken() {
     return myConfig.myAccessToken;
   }
@@ -95,16 +100,15 @@ public class TunaProjectComponent implements ProjectComponent, PersistentStateCo
   }
 
   private void destroySession() {
+    SlackSession existing = mySlackSession;
     ApplicationManager.getApplication().executeOnPooledThread(() -> {
       try {
-        mySlackSession.disconnect();
+        existing.disconnect();
       }
       catch (IOException e) {
         LOG.error(e);
       }
-      finally {
-        mySlackSession = null;
-      }
     });
+    mySlackSession = null;
   }
 }

@@ -20,8 +20,7 @@ class TunaNotificationManager(private val project: Project) {
 
         // Running Run configurations
         connection.subscribe(ExecutionManager.EXECUTION_TOPIC, object : ExecutionListener {
-            override fun processTerminated(executorId: String, env: ExecutionEnvironment, handler: ProcessHandler,
-                                           exitCode: Int) {
+            override fun processTerminated(executorId: String, env: ExecutionEnvironment, handler: ProcessHandler, exitCode: Int) {
                 addNotification(TunaNotification("Process $env finished with exit code $exitCode", ""))
             }
         })
@@ -32,7 +31,7 @@ class TunaNotificationManager(private val project: Project) {
             }
 
             override fun branchHasChanged(branchName: String) {
-                addNotification(TunaNotification("Branch %s checked out".format(branchName), ""))
+                addNotification(TunaNotification("Branch $branchName checked out", ""))
             }
         })
 
@@ -52,7 +51,7 @@ class TunaNotificationManager(private val project: Project) {
 //        val isActive = ApplicationManager.getApplication().isActive
         val isActive = false // temporarily disable to simplify testing
         if (!isActive) {
-            notificationsShown.add(notification)
+            TunaProjectComponent.getInstance(project).slackMessages?.sendMessageToCurrentUser(notification.title, asBot = true)
         }
 
     }
