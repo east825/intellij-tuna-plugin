@@ -26,12 +26,6 @@ class TunaNotificationManager(private val project: Project) {
             }
         })
 
-//        connection.subscribe(GitRepository.GIT_REPO_CHANGE, object: GitRepositoryChangeListener {
-//            override fun repositoryChanged(rep: GitRepository) {
-//                addNotification(TunaNotification(rep.info.toString(), "in git repository"))
-//            }
-//        })
-
         // Successful branch check out
         connection.subscribe(BranchChangeListener.VCS_BRANCH_CHANGED, object : BranchChangeListener {
             override fun branchWillChange(branchName: String) {
@@ -55,6 +49,11 @@ class TunaNotificationManager(private val project: Project) {
     }
 
     private fun addNotification(notification: TunaNotification) {
-        notificationsShown.add(notification)
+//        val isActive = ApplicationManager.getApplication().isActive
+        val isActive = false // temporarily disable to simplify testing
+        if (!isActive) {
+            notificationsShown.add(notification)
+        }
+
     }
 }
