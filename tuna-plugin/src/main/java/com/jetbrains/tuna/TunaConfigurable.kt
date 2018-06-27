@@ -18,8 +18,9 @@ import java.nio.charset.StandardCharsets
 import javax.swing.JComponent
 
 
-class TunaConfigurable(val myProject: Project) : Configurable {
-  val myAccessTokenField = JBTextField()
+class TunaConfigurable(private val myProject: Project) : Configurable {
+  private val myTunaComponent = TunaProjectComponent.getInstance(myProject)
+  private val myAccessTokenField = JBTextField()
 
   @Nls(capitalization = Nls.Capitalization.Title)
   override fun getDisplayName(): String {
@@ -41,10 +42,11 @@ class TunaConfigurable(val myProject: Project) : Configurable {
 
           val app = ApplicationManager.getApplication()
           val modality = ModalityState.stateForComponent(myAccessTokenField)
-          
+
           app.executeOnPooledThread {
             val code = interceptCodeAndRequestToken()
             if (code != null) {
+              myTunaComponent.restartSession()
               app.invokeLater({ myAccessTokenField.text = code }, modality)
             }
           }
@@ -92,18 +94,15 @@ class TunaConfigurable(val myProject: Project) : Configurable {
   private fun urlEncode(s: String) = URLEncoder.encode(s, StandardCharsets.UTF_8.name())
 
   override fun reset() {
-    val component = TunaProjectComponent.getInstance(myProject)
-    myAccessTokenField.text = component.state?.myAccessToken
+    myAccessTokenField.text = myTunaComponent.accessToken
   }
 
   override fun isModified(): Boolean {
-    val component = TunaProjectComponent.getInstance(myProject)
-    return component.state?.myAccessToken != myAccessTokenField.text
+    return myTunaComponent.accessToken != myAccessTokenField.text
   }
 
   @Throws(ConfigurationException::class)
   override fun apply() {
-    val component = TunaProjectComponent.getInstance(myProject)
-    component.state?.myAccessToken = myAccessTokenField.text
+    myTunaComponent.accessToken = myAccessTokenField.text
   }
 }
