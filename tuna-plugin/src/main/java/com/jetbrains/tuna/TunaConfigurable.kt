@@ -3,7 +3,6 @@ package com.jetbrains.tuna
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonElement
 import com.intellij.ide.BrowserUtil
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.project.Project
@@ -45,10 +44,7 @@ class TunaConfigurable(val myProject: Project) : Configurable {
     val server = Server.start(8000)
     try {
       val code = server.getCode()
-      ApplicationManager.getApplication().executeOnPooledThread {
-        requestToken(code)
-      }
-      return "foo"
+      return requestToken(code)
     }
     finally {
       server.shutdown()
