@@ -6,4 +6,5 @@ object TunaAppInfo {
 
   val OAUTH_AUTHORIZE_URL = "https://slack.com/oauth/authorize"
   val OAUTH_ACCESS_TOKEN_URL = "https://slack.com/api/oauth.access"
+  val REDIRECT_URI: String = "http://localhost:8000/oauth/callback"
 }
