@@ -29,6 +29,7 @@ compileKotlin {
 
 intellij {
     version 'IC-2018.1.5'
+//    plugins = ['git4idea']
 }
 
 group 'org.jetbrains'
