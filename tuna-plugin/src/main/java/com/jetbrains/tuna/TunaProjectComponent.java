@@ -10,20 +10,19 @@ import org.jetbrains.annotations.Nullable;
 public class TunaProjectComponent implements ProjectComponent, PersistentStateComponent<TunaProjectComponent.Config> {
     @NotNull
     private Project myProject;
+    @NotNull
+    private TunaNotificationManager myNotificationManager;
 
     private Config myConfig;
 
     TunaProjectComponent(@NotNull Project project) {
         myProject = project;
+        myNotificationManager = new TunaNotificationManager(myProject);
     }
 
     @Override
     public void projectOpened() {
-        initProjectListeners();
-    }
-
-    private void initProjectListeners() {
-
+        myNotificationManager.initProjectListeners();
     }
 
     @Nullable
