@@ -22,4 +22,8 @@
             <implementation-class>com.jetbrains.tuna.TunaProjectComponent</implementation-class>
         </component>
     </project-components>
+
+    <actions>
+        <action id="com.jetbrains.tuna.PostMessageAction" class="com.jetbrains.tuna.PostMessageAction" text="Post message to Slack"/>
+    </actions>
 </idea-plugin>

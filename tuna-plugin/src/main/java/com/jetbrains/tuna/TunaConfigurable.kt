@@ -3,6 +3,8 @@ package com.jetbrains.tuna
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonElement
 import com.intellij.ide.BrowserUtil
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.project.Project
@@ -31,10 +33,21 @@ class TunaConfigurable(val myProject: Project) : Configurable {
         link("Authorize in Slack") {
           BrowserUtil.open("${TunaAppInfo.OAUTH_AUTHORIZE_URL}?" +
                            "client_id=${urlEncode(TunaAppInfo.CLIENT_ID)}&" +
-                           "scope=incoming-webhook&" +
+                           // TODO find fine-grained scopes for all these activities
+                           // rtm:stream is required for simple-slack-api library
+                           // it's granted together with client scope
+                           "scope=${urlEncode("read post client")}&" +
                            "redirect_uri=${urlEncode(TunaAppInfo.REDIRECT_URI)}")
 
-          myAccessTokenField.text = interceptCodeAndRequestToken()
+          val app = ApplicationManager.getApplication()
+          val modality = ModalityState.stateForComponent(myAccessTokenField)
+          
+          app.executeOnPooledThread {
+            val code = interceptCodeAndRequestToken()
+            if (code != null) {
+              app.invokeLater({ myAccessTokenField.text = code }, modality)
+            }
+          }
         }
       }
     }
@@ -66,7 +79,7 @@ class TunaConfigurable(val myProject: Project) : Configurable {
 
     println("Request: $formEncoded")
 
-    val response = ClientRequest().post("https://slack.com/api/oauth.access", formEncoded)
+    val response = ClientRequest().post(TunaAppInfo.OAUTH_ACCESS_TOKEN_URL, formEncoded)
 
     val responseContent = response.content().toString(Charsets.UTF_8)
 
