@@ -1,0 +1,20 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+}
+
+plugins {
+    id "org.jetbrains.intellij" version "0.3.4"
+}
+
+apply plugin: 'idea'
+apply plugin: 'org.jetbrains.intellij'
+apply plugin: 'java'
+
+intellij {
+    version 'IC-2018.1.5'
+}
+
+group 'org.jetbrains'
+version '0.1' // Plugin version
