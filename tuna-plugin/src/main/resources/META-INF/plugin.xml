@@ -26,4 +26,8 @@
     <actions>
         <action id="com.jetbrains.tuna.PostMessageAction" class="com.jetbrains.tuna.PostMessageAction" text="Post message to Slack"/>
     </actions>
+
+    <actions>
+        <action id="tuna.WhatTheCode" class="com.jetbrains.tuna.actions.WhatTheCodeAction" text="What's The Code" icon="/icons/tuna.png"/>
+    </actions>
 </idea-plugin>
