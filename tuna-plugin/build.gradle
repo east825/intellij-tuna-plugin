@@ -33,3 +33,15 @@ intellij {
 
 group 'org.jetbrains'
 version '0.1' // Plugin version
+
+repositories {
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+    def withoutSlf4j = { exclude group: 'org.slf4j', module: 'slf4j-api' }
+
+    // see https://github.com/Ullink/simple-slack-api
+    compile 'com.github.Ullink:simple-slack-api:1.2.0', withoutSlf4j
+}
