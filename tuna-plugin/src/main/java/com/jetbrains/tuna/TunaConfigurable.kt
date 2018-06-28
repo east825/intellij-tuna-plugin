@@ -8,6 +8,7 @@ import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.wm.WindowManager
 import com.intellij.ui.components.JBTextField
 import com.intellij.ui.layout.*
 import com.jetbrains.tuna.oauth.ClientRequest
@@ -47,7 +48,11 @@ class TunaConfigurable(private val myProject: Project) : Configurable {
             val code = interceptCodeAndRequestToken()
             if (code != null) {
               myTunaComponent.restartSession()
-              app.invokeLater({ myAccessTokenField.text = code }, modality)
+              app.invokeLater({
+                                myAccessTokenField.text = code
+                                // Request focus back to settings dialog
+                                WindowManager.getInstance().getFrame(myProject)?.toFront()
+                              }, modality)
             }
           }
         }
