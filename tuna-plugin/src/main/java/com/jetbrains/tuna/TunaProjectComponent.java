@@ -8,9 +8,13 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.*;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.options.ShowSettingsUtil;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.xmlb.XmlSerializerUtil;
+import com.twelvemonkeys.lang.StringUtil;
 import com.ullink.slack.simpleslackapi.SlackSession;
+import com.ullink.slack.simpleslackapi.SlackUser;
 import com.ullink.slack.simpleslackapi.impl.SlackSessionFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -46,7 +50,8 @@ public class TunaProjectComponent implements ProjectComponent, PersistentStateCo
     myNotificationManager.initProjectListeners();
     if (myConfig.myAccessToken != null && !myConfig.myAccessToken.isEmpty()) {
       restartSession();
-    } else {
+    }
+    else {
       showBalloon(myProject);
     }
   }
@@ -100,10 +105,10 @@ public class TunaProjectComponent implements ProjectComponent, PersistentStateCo
 
   public void setAccessToken(@Nullable String token) {
     myConfig.myAccessToken = token;
-    if (mySlackSession != null && token == null) {
+    if (mySlackSession != null && StringUtil.isEmpty(token)) {
       destroySession();
     }
-    else if (mySlackSession == null && token != null) {
+    else if (mySlackSession == null && !StringUtil.isEmpty(token)) {
       restartSession();
     }
   }
@@ -113,19 +118,26 @@ public class TunaProjectComponent implements ProjectComponent, PersistentStateCo
       destroySession();
     }
     mySlackSession = SlackSessionFactory.getSlackSessionBuilder(myConfig.myAccessToken).build();
-    ApplicationManager.getApplication().executeOnPooledThread(() -> {
-      try {
-        LOG.info("Session initialization started");
-        mySlackSession.connect();
-        LOG.info("Session initialization finished");
-        mySlackMessages = new SlackMessages(mySlackSession);
+    new Task.Backgroundable(myProject, "Initializing Connection with Slack", false) {
+      @Override
+      public void run(@NotNull ProgressIndicator indicator) {
+        try {
+          indicator.setText2("Initializing connection");
+          mySlackSession.connect();
+          mySlackMessages = new SlackMessages(mySlackSession);
+          indicator.setText("Pre-fetching User Icons");
+          for (SlackUser user: mySlackSession.getUsers()) {
+            indicator.setText2("Fetching icon for " + user.getUserName());
+            mySlackMessages.getUserIcon(user.getId());
+          }
+        }
+        catch (IOException e) {
+          LOG.error(e);
+          mySlackSession = null;
+          mySlackMessages = null;
+        }
       }
-      catch (IOException e) {
-        LOG.error(e);
-        mySlackSession = null;
-        mySlackMessages = null;
-      }
-    });
+    }.queue();
   }
 
   private void destroySession() {
