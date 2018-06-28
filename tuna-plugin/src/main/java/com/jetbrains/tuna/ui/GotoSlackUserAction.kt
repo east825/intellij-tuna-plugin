@@ -32,7 +32,7 @@ class GotoSlackUserAction : GotoActionBase() {
     val model = SlackUserPopupModel(project, slackMessages)
     val provider = SlackUserItemProvider(slackMessages)
 
-    val editor = e.getRequiredData(CommonDataKeys.EDITOR)
+    val editor = e.getData(CommonDataKeys.EDITOR) ?: return
 
     val popup = ChooseByNamePopup.createPopup(project, model, provider)
     popup.setShowListForEmptyPattern(true)
