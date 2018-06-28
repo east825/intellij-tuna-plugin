@@ -29,7 +29,6 @@ compileKotlin {
 
 intellij {
   version 'IC-2018.1.5'
-  updateSinceUntilBuild false
 }
 
 publishPlugin {
@@ -37,8 +36,13 @@ publishPlugin {
   password "${System.env.PLUGIN_PASSWORD}"
 }
 
+patchPluginXml {
+  sinceBuild "181.0"
+  untilBuild "181.*"
+}
+
 group 'org.jetbrains'
-version '0.3' // Plugin version
+version '0.4' // Plugin version
 
 repositories {
   mavenCentral()

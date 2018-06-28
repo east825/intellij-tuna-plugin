@@ -1,6 +1,5 @@
 <idea-plugin>
   <id>com.jetbrains.tuna-plugin</id>
-  <version>0.3</version>
   <name>TUNA</name>
   <vendor email="mikhail.ġolubev@jetbrains.com" url="http://www.jetbrains.com">JetBrains</vendor>
 
@@ -10,8 +9,6 @@
       <p>Simplistic tool for integration with Slack from JetBrains IDEs.</p>
     ]]>
   </description>
-
-  <idea-version since-build="181.0" until-build="181.*"/>
 
   <depends>com.intellij.modules.lang</depends>
 
