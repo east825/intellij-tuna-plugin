@@ -6,6 +6,8 @@ import com.intellij.ide.util.gotoByName.ChooseByNameItemProvider
 import com.intellij.ide.util.gotoByName.ChooseByNamePopup
 import com.intellij.ide.util.gotoByName.SimpleChooseByNameModel
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.psi.codeStyle.NameUtil
@@ -28,12 +30,23 @@ class GotoSlackUserAction : GotoActionBase() {
     val slackMessages = component.slackMessages ?: return
     val model = SlackUserPopupModel(project, slackMessages)
     val provider = SlackUserItemProvider(slackMessages)
+
+    val editor = e.getRequiredData(CommonDataKeys.EDITOR)
+
     val popup = ChooseByNamePopup.createPopup(project, model, provider)
     popup.setShowListForEmptyPattern(true)
     popup.isSearchInAnyPlace = true
     showNavigationPopup(object : GotoActionCallback<SlackUser>() {
       override fun elementChosen(popup: ChooseByNamePopup?, element: Any?) {
-        // TODO show SendMessageDialog
+        if (element !is SlackUser) {
+          // todo show error message dialog
+          return
+        }
+        val sendMessageDialog = SendMessageDialog(project, element, CodeSnippet(editor))
+
+        ApplicationManager.getApplication().invokeLater {
+          sendMessageDialog.showAndGet()
+        }
       }
     }, null, popup)
   }
@@ -59,7 +72,8 @@ class GotoSlackUserAction : GotoActionBase() {
             if (!value.realName.isNullOrEmpty()) {
               append(" ")
               SpeedSearchUtil.appendColoredFragmentForMatcher("(${value.realName})",
-                                                              this, SimpleTextAttributes.GRAYED_ATTRIBUTES, matcher, selectedBackground, selected)
+                                                              this, SimpleTextAttributes.GRAYED_ATTRIBUTES, matcher, selectedBackground,
+                                                              selected)
             }
           }
         }

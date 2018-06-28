@@ -1,41 +1,50 @@
 package com.jetbrains.tuna.ui
 
-import com.intellij.openapi.fileTypes.FileTypes
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
-import com.intellij.ui.EditorCustomization
-import com.intellij.ui.EditorTextFieldProvider
-import com.intellij.ui.TextFieldWithAutoCompletion
+import com.intellij.ui.EditorTextField
 import com.intellij.ui.components.JBTextField
 import com.intellij.ui.layout.*
+import com.jetbrains.tuna.TunaProjectComponent
+import com.ullink.slack.simpleslackapi.SlackUser
 import javax.swing.JComponent
 
-class SendMessageDialog(project: Project) : DialogWrapper(project) {
-  private val receiverName = tuneTextField(project)
-  private val messageField = JBTextField(20)
+class SendMessageDialog(private val project: Project,
+                        initialSlackUser: SlackUser? = null,
+                        codeSnippet: CodeSnippet? = null) : DialogWrapper(project) {
+  private val receiverName = JBTextField(20)
+  private val codeSnippetTextField: EditorTextField?
+  private val messageField: EditorTextField = createMessageTextField(project).apply { }
+
+  private var slackUser: SlackUser? = initialSlackUser
 
   init {
+    initialSlackUser?.let {
+      receiverName.text = "To: ${it.userName}"
+      receiverName.isEnabled = false
+    }
+
+    codeSnippetTextField = codeSnippet?.let {
+      createCodeSnippetTextField(project)
+    }?.apply { text = codeSnippet.editor.document.text }
+
     init()
-    title = "Send Message"
+    title = "Send to Slack"
   }
 
   override fun createCenterPanel(): JComponent? {
     return panel {
-      row("To:") { receiverName(CCFlags.pushX) }
-      row("Message:") { messageField(CCFlags.pushX) }
+      codeSnippetTextField?.let { row { it(CCFlags.grow, CCFlags.push) } }
+      row { messageField(CCFlags.grow, CCFlags.push) }
+      row { receiverName(CCFlags.pushX) }
     }
   }
 
   override fun doOKAction() {
+    val slackUser = slackUser ?: return
+    val slackMessages = TunaProjectComponent.getInstance(project).slackMessages
+    slackMessages?.postMessageWithCodeSnippet(slackUser, messageField.text, codeSnippetTextField?.text ?: "")
+
     super.doOKAction()
-    // TODO
   }
-
-  private fun tuneTextField(project: Project): JComponent {
-    val features = hashSetOf<EditorCustomization>()
-    val textField = EditorTextFieldProvider.getInstance().getEditorField(FileTypes.PLAIN_TEXT.language, project, features);
-    TextFieldWithAutoCompletion.installCompletion(textField.document, project, SlackRecipientProvider(project), false)
-    return textField
-  }
-
 }

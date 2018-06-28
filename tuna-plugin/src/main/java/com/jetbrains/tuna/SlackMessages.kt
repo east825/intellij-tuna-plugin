@@ -6,8 +6,10 @@ import com.google.gson.GsonBuilder
 import com.google.gson.JsonElement
 import com.ullink.slack.simpleslackapi.SlackChatConfiguration
 import com.ullink.slack.simpleslackapi.SlackSession
+import com.ullink.slack.simpleslackapi.SlackUser
 import java.net.URL
 import java.util.concurrent.ExecutionException
+import java.util.concurrent.TimeUnit
 import javax.swing.Icon
 import javax.swing.ImageIcon
 
@@ -48,4 +50,14 @@ class SlackMessages(val session: SlackSession) {
     return null
   }
 
+  fun postMessageWithCodeSnippet(user: SlackUser, message: String, snippet: String) {
+    val handler = session.openDirectMessageChannel(user)
+    handler.waitForReply(5, TimeUnit.SECONDS)
+    val reply = handler.reply
+    if (!reply.isOk) {
+      println("Failed to open DM to ${user.userName}: ${reply.errorMessage}")
+    }
+    val channel = reply.slackChannel
+    session.sendFile(channel, snippet.toByteArray(), "file.name", "This is Snippet Title", message)
+  }
 }
