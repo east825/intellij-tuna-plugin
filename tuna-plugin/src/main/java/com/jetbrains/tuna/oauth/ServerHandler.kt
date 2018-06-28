@@ -17,16 +17,14 @@ class ServerHandler : SimpleChannelInboundHandler<FullHttpMessage>() {
   }
 
   override fun channelRead0(ctx: ChannelHandlerContext, msg: FullHttpMessage) {
-    when {
-      msg is FullHttpRequest -> {
-        val parameters = URLEncodedUtils.parse(msg.uri(), Charsets.UTF_8)
-        parameters.find { it.name.endsWith("code") }?.let {
-          codes.set(it.value)
-        }
-
-        val message = Unpooled.copiedBuffer("Code accepted. Go back to the IDE.", StandardCharsets.UTF_8)
-        ctx.writeAndFlush(DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK, message))
+    if (msg is FullHttpRequest) {
+      val parameters = URLEncodedUtils.parse(msg.uri(), Charsets.UTF_8)
+      parameters.find { it.name.endsWith("code") }?.let {
+        codes.set(it.value)
       }
+
+      val message = Unpooled.copiedBuffer("Code accepted. Go back to the IDE.", StandardCharsets.UTF_8)
+      ctx.writeAndFlush(DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK, message))
     }
   }
 

@@ -12,7 +12,7 @@ class Server private constructor(port: Int) {
   private val serverInitializer = ServerInitializer()
 
   init {
-    val b = ServerBootstrap();
+    val b = ServerBootstrap()
     b.group(bossGroup, workerGroup)
             .channel(NioServerSocketChannel::class.java)
             .handler(LoggingHandler())
@@ -24,8 +24,8 @@ class Server private constructor(port: Int) {
   fun getCode(): String = serverInitializer.getCode()
 
   fun shutdown() {
-    bossGroup.shutdownGracefully();
-    workerGroup.shutdownGracefully();
+    bossGroup.shutdownGracefully()
+    workerGroup.shutdownGracefully()
   }
 
   companion object {

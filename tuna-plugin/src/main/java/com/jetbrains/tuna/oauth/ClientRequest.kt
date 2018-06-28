@@ -59,7 +59,7 @@ class ClientRequest {
       // Prepare the HTTP request.
       val request = DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, uri.rawPath)
       request.headers().set(HttpHeaderNames.HOST, host)
-      request.headers().add(HttpHeaderNames.CONTENT_TYPE, "application/x-www-form-urlencoded");
+      request.headers().add(HttpHeaderNames.CONTENT_TYPE, "application/x-www-form-urlencoded")
       val payloadBuffer = Unpooled.copiedBuffer(payload, StandardCharsets.UTF_8)
       request.headers().set(HttpHeaderNames.CONTENT_LENGTH, payloadBuffer.readableBytes())
       request.content().clear().writeBytes(payloadBuffer)
