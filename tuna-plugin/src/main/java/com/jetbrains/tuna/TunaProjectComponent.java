@@ -1,8 +1,13 @@
 package com.jetbrains.tuna;
 
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationType;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.*;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.ullink.slack.simpleslackapi.SlackSession;
@@ -39,9 +44,25 @@ public class TunaProjectComponent implements ProjectComponent, PersistentStateCo
   @Override
   public void projectOpened() {
     myNotificationManager.initProjectListeners();
-    if (myConfig.myAccessToken != null) {
+    if (myConfig.myAccessToken != null && !myConfig.myAccessToken.isEmpty()) {
       restartSession();
+    } else {
+      showBalloon(myProject);
     }
+  }
+
+  private void showBalloon(Project project) {
+    Notification notification = new Notification("Tuna plugin", "Tuna plugin",
+            "You are not authorised", NotificationType.WARNING);
+    notification.addAction(new AnAction("Authorise in Slack") {
+      @Override
+      public void actionPerformed(AnActionEvent e) {
+        ShowSettingsUtil.getInstance().showSettingsDialog(project, TunaConfigurable.class);
+        notification.expire();
+      }
+    });
+
+    notification.notify(project);
   }
 
   @Nullable
