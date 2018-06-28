@@ -46,7 +46,7 @@ class GotoSlackUserAction : GotoActionBase() {
           // todo show error message dialog
           return
         }
-        val sendMessageDialog = SendMessageDialog(project, element, CodeSnippet(editor))
+        val sendMessageDialog = SendMessageDialog(project, element, editor)
 
         ApplicationManager.getApplication().invokeLater {
           sendMessageDialog.showAndGet()

@@ -1,7 +1,10 @@
 package com.jetbrains.tuna.ui
 
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
+import com.intellij.psi.PsiDocumentManager
 import com.intellij.ui.EditorTextField
 import com.intellij.ui.components.JBTextField
 import com.intellij.ui.layout.*
@@ -10,26 +13,26 @@ import com.ullink.slack.simpleslackapi.SlackUser
 import javax.swing.JComponent
 
 class SendMessageDialog(private val project: Project,
-                        initialSlackUser: SlackUser? = null,
-                        codeSnippet: CodeSnippet? = null) : DialogWrapper(project) {
+                        private val slackUser: SlackUser,
+                        editor: Editor) : DialogWrapper(project) {
+
   private val receiverName = JBTextField(20)
   private val codeSnippetTextField: EditorTextField?
-  private val messageField: EditorTextField = createMessageTextField(project).apply { }
-
-  private var slackUser: SlackUser? = initialSlackUser
+  private val messageField: EditorTextField = createMessageTextField(project)
 
   init {
-    initialSlackUser?.let {
-      receiverName.text = "To: ${it.userName}"
-      receiverName.isEnabled = false
-    }
+    title = "Send to Slack"
 
-    codeSnippetTextField = codeSnippet?.let {
-      createCodeSnippetTextField(project, codeSnippet)
-    }?.apply { text = codeSnippet.editor.document.text }
+    receiverName.text = "To: ${slackUser.userName}"
+    receiverName.isEnabled = false
+
+    val document = editor.document
+    val codeSnippet = editor.selectionModel.selectedText ?: document.text
+    val psiFile = PsiDocumentManager.getInstance(project).getPsiFile(document)
+
+    codeSnippetTextField = createCodeSnippetTextField(project, codeSnippet, psiFile?.language ?: PlainTextLanguage.INSTANCE)
 
     init()
-    title = "Send to Slack"
   }
 
   override fun createCenterPanel(): JComponent? {
@@ -41,7 +44,6 @@ class SendMessageDialog(private val project: Project,
   }
 
   override fun doOKAction() {
-    val slackUser = slackUser ?: return
     val slackMessages = TunaProjectComponent.getInstance(project).slackMessages
     slackMessages?.postMessageWithCodeSnippet(slackUser, messageField.text, codeSnippetTextField?.text ?: "")
 
