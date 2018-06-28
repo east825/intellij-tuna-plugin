@@ -94,7 +94,9 @@ public class TunaProjectComponent implements ProjectComponent, PersistentStateCo
     mySlackSession = SlackSessionFactory.getSlackSessionBuilder(myConfig.myAccessToken).build();
     ApplicationManager.getApplication().executeOnPooledThread(() -> {
       try {
+        LOG.info("Session initialization started");
         mySlackSession.connect();
+        LOG.info("Session initialization finished");
         mySlackMessages = new SlackMessages(mySlackSession);
       }
       catch (IOException e) {
