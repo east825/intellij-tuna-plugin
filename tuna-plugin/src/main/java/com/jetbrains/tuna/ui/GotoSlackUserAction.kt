@@ -16,6 +16,7 @@ import com.intellij.ui.SimpleTextAttributes
 import com.intellij.ui.speedSearch.SpeedSearchUtil
 import com.intellij.util.Processor
 import com.intellij.util.text.MatcherHolder
+import com.intellij.util.ui.EmptyIcon
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.tuna.SlackMessages
 import com.jetbrains.tuna.TunaProjectComponent
@@ -36,6 +37,9 @@ class GotoSlackUserAction : GotoActionBase() {
     val popup = ChooseByNamePopup.createPopup(project, model, provider)
     popup.setShowListForEmptyPattern(true)
     popup.isSearchInAnyPlace = true
+    //    popup.setAlwaysHasMore(true)
+    //    popup.maximumListSizeLimit = 20 // initial limit
+    //    popup.setListSizeIncreasing(20) // page size
     showNavigationPopup(object : GotoActionCallback<SlackUser>() {
       override fun elementChosen(popup: ChooseByNamePopup?, element: Any?) {
         if (element !is SlackUser) {
@@ -57,13 +61,9 @@ class GotoSlackUserAction : GotoActionBase() {
     override fun getNames(): Array<String> = emptyArray()
 
     override fun getListCellRenderer(): ListCellRenderer<*> {
-      return object : ColoredListCellRenderer<SlackUser>() {
-        override fun customizeCellRenderer(list: JList<out SlackUser>,
-                                           value: SlackUser?,
-                                           index: Int,
-                                           selected: Boolean,
-                                           hasFocus: Boolean) {
-          if (value != null) {
+      return object : ColoredListCellRenderer<Any>() {
+        override fun customizeCellRenderer(list: JList<out Any>, value: Any?, index: Int, selected: Boolean, hasFocus: Boolean) {
+          if (value is SlackUser) {
             val matcher = MatcherHolder.getAssociatedMatcher(list)
             val selectedBackground = UIUtil.getListSelectionBackground()
             icon = slackMessages.getUserIcon(value.id)
@@ -74,6 +74,12 @@ class GotoSlackUserAction : GotoActionBase() {
               SpeedSearchUtil.appendColoredFragmentForMatcher("(${value.realName})",
                                                               this, SimpleTextAttributes.GRAYED_ATTRIBUTES, matcher, selectedBackground,
                                                               selected)
+            }
+          }
+          else if (value == ChooseByNameBase.EXTRA_ELEM) {
+            if ("..." == value) run {
+              icon = EmptyIcon.ICON_16
+              append(value)
             }
           }
         }
@@ -98,7 +104,9 @@ class GotoSlackUserAction : GotoActionBase() {
           .forEach {
             // fetch icon on a pooled thread
             messages.getUserIcon(it.id)
-            consumer.process(it)
+            if (!consumer.process(it)) {
+              return false
+            }
           }
       }
       return true
