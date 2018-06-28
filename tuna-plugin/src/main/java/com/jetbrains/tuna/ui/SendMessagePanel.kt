@@ -8,13 +8,14 @@ import com.intellij.ui.EditorTextField
 import com.intellij.ui.components.JBPanel
 import com.intellij.ui.components.JBTextField
 import com.intellij.ui.layout.*
+import com.jetbrains.tuna.getBuiltinServerUrl
 import com.ullink.slack.simpleslackapi.SlackUser
 import java.awt.BorderLayout
 import javax.swing.JComponent
 
 class SendMessagePanel(project: Project, slackUser: SlackUser?, editor: Editor)
   : JBPanel<SendMessagePanel>(BorderLayout()) {
-  private val codeSnippetTextField: EditorTextField
+  private val codeSnippetTextField: EditorTextField?
   private val messageField: EditorTextField = createMessageTextField(project)
   private val slackUserField: JBTextField = JBTextField(slackUser?.userName ?: "").apply { isEditable = false }
 
@@ -22,24 +23,37 @@ class SendMessagePanel(project: Project, slackUser: SlackUser?, editor: Editor)
     get() = messageField
 
   init {
-    val document = editor.document
-    val codeSnippet = editor.selectionModel.selectedText?.let { removeCommonIndent(it) } ?: document.text
-    val psiFile = PsiDocumentManager.getInstance(project).getPsiFile(document)
+    if (editor.selectionModel.hasSelection()) {
 
-    codeSnippetTextField = createCodeSnippetTextField(project, codeSnippet, psiFile?.language ?: PlainTextLanguage.INSTANCE)
+      val document = editor.document
+      val codeSnippet = editor.selectionModel.selectedText?.let { removeCommonIndent(it) } ?: document.text
+      val psiFile = PsiDocumentManager.getInstance(project).getPsiFile(document)
+
+      codeSnippetTextField = createCodeSnippetTextField(project, codeSnippet, psiFile?.language ?: PlainTextLanguage.INSTANCE)
+    }
+    else {
+      codeSnippetTextField = null
+
+      getBuiltinServerUrl(editor)?.let {
+        messageField.text = "\n\n$it"
+        messageField.setCaretPosition(0)
+      }
+    }
 
     add(panel {
       row("Message:") {
         messageField(CCFlags.grow, CCFlags.push)
       }
-      row("Code:") { codeSnippetTextField(CCFlags.grow, CCFlags.pushX) }
+      codeSnippetTextField?.let {
+        row("Code:") { it(CCFlags.grow, CCFlags.pushX) }
+      }
       row("To:") { slackUserField(CCFlags.growX) }
     }, BorderLayout.CENTER)
   }
 
   fun getMessage(): String = messageField.text
 
-  fun getCodeSnippet(): String? = codeSnippetTextField.text
+  fun getCodeSnippet(): String? = codeSnippetTextField?.text
 
   private fun removeCommonIndent(text: String): String {
     // TODO Handle mixed tabs and spaces

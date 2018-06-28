@@ -67,7 +67,14 @@ class SendMessagePopup(private val project: Project,
     override fun actionPerformed(e: ActionEvent) {
       val slackUser = slackUser ?: return
       val slackMessages = TunaProjectComponent.getInstance(project).slackMessages
-      slackMessages?.postMessageWithCodeSnippet(slackUser, sendMessagePanel.getMessage(), sendMessagePanel.getCodeSnippet() ?: "")
+
+      val codeSnippet = sendMessagePanel.getCodeSnippet()
+      if (codeSnippet == null) {
+        slackMessages?.session?.sendMessageToUser(slackUser, sendMessagePanel.getMessage(), null)
+      }
+      else {
+        slackMessages?.postMessageWithCodeSnippet(slackUser, sendMessagePanel.getMessage(), codeSnippet)
+      }
 
       myBalloon.closeOk(null)
     }
