@@ -1,6 +1,7 @@
 package com.jetbrains.tuna.ui
 
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.jetbrains.tuna.TunaProjectComponent
@@ -30,7 +31,8 @@ class SendMessageDialog(private val project: Project,
       slackMessages?.session?.sendMessageToUser(slackUser, sendMessagePanel.getMessage(), null)
     }
     else {
-      slackMessages?.postMessageWithCodeSnippet(slackUser, sendMessagePanel.getMessage(), codeSnippet)
+      val fileName = FileDocumentManager.getInstance().getFile(editor.document)?.name ?: "unknown.txt"
+      slackMessages?.postMessageWithCodeSnippet(slackUser, sendMessagePanel.getMessage(), codeSnippet, fileName)
     }
 
     super.doOKAction()

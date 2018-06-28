@@ -50,7 +50,7 @@ class SlackMessages(val session: SlackSession) {
     return null
   }
 
-  fun postMessageWithCodeSnippet(user: SlackUser, message: String, snippet: String) {
+  fun postMessageWithCodeSnippet(user: SlackUser, message: String, snippet: String, fileName: String) {
     val handler = session.openDirectMessageChannel(user)
     handler.waitForReply(5, TimeUnit.SECONDS)
     val reply = handler.reply
@@ -58,6 +58,6 @@ class SlackMessages(val session: SlackSession) {
       println("Failed to open DM to ${user.userName}: ${reply.errorMessage}")
     }
     val channel = reply.slackChannel
-    session.sendFile(channel, snippet.toByteArray(), "file.name", "This is Snippet Title", message)
+    session.sendFile(channel, snippet.toByteArray(), fileName, fileName, message)
   }
 }
