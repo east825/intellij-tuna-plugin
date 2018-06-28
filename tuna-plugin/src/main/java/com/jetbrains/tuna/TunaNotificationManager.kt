@@ -71,7 +71,7 @@ class TunaNotificationManager(private val project: Project) {
                         TimeUnit.MILLISECONDS.sleep(indexingPause)
                         if (!(prevIndexingStart > prevIndexingFinish && (prevIndexingStart - prevIndexingFinish) < indexingPause)) {
                             if (currentTime >= prevIndexingFinish) {
-                                addNotification(TunaNotification("Indexing Finished", ""))
+                                addNotification(TunaNotification("Indexing Finished :tada:", ""))
                                 prevIndexingStart = -1L
                             }
                         }
