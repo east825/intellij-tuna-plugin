@@ -36,5 +36,6 @@ fun createMessageTextField(project: Project): EditorTextField {
   features.add(WrapWhenTypingReachesRightMarginCustomization.ENABLED)
   val textField = EditorTextFieldProvider.getInstance().getEditorField(FileTypes.PLAIN_TEXT.language, project, features)
   TextFieldWithAutoCompletion.installCompletion(textField.document, project, SlackRecipientProvider(project), false)
+  textField.minimumSize = Dimension(400, 50)
   return textField
 }

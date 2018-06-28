@@ -37,7 +37,7 @@ class SendMessagePopup(private val project: Project,
       .setProject(project)
       .setResizable(false)
       .setModalContext(false)
-      .setCancelOnClickOutside(true)
+      .setCancelOnClickOutside(false)
       .setRequestFocus(true)
       .setCancelKeyEnabled(true)
       /*

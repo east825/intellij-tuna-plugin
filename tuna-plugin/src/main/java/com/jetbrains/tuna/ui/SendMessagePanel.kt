@@ -1,7 +1,6 @@
 package com.jetbrains.tuna.ui
 
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
@@ -16,10 +15,7 @@ import javax.swing.JComponent
 class SendMessagePanel(project: Project, slackUser: SlackUser?, editor: Editor)
   : JBPanel<SendMessagePanel>(BorderLayout()) {
   private val codeSnippetTextField: EditorTextField
-  private val messageField: EditorTextField = createMessageTextField(project).apply {
-    setPlaceholder("Message @${slackUser?.userName}")
-    (editor as EditorEx).setShowPlaceholderWhenFocused(true)
-  }
+  private val messageField: EditorTextField = createMessageTextField(project)
   private val slackUserField: JBTextField = JBTextField(slackUser?.userName ?: "").apply { isEditable = false }
 
   val preferableFocusComponent: JComponent
