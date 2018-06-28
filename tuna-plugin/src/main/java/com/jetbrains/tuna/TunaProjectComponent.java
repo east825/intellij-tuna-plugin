@@ -14,7 +14,7 @@ import java.io.IOException;
 
 @State(name = "TunaConfig", storages = @Storage(StoragePathMacros.WORKSPACE_FILE))
 public class TunaProjectComponent implements ProjectComponent, PersistentStateComponent<TunaProjectComponent.Config> {
-  private static final Logger LOG = Logger.getInstance(TunaProjectComponent.class);
+  public static final Logger LOG = Logger.getInstance(TunaProjectComponent.class);
 
   public static TunaProjectComponent getInstance(@NotNull Project project) {
     return project.getComponent(TunaProjectComponent.class);
@@ -24,6 +24,7 @@ public class TunaProjectComponent implements ProjectComponent, PersistentStateCo
   private Project myProject;
 
   private SlackSession mySlackSession;
+  private SlackMessages mySlackMessages;
 
   @NotNull
   private TunaNotificationManager myNotificationManager;
@@ -65,7 +66,10 @@ public class TunaProjectComponent implements ProjectComponent, PersistentStateCo
 
   @Nullable
   public SlackMessages getSlackMessages() {
-    return mySlackSession != null && mySlackSession.isConnected() ? new SlackMessages(mySlackSession) : null;
+    if (mySlackMessages == null && mySlackSession != null && mySlackSession.isConnected()) {
+      mySlackMessages = new SlackMessages(mySlackSession);
+    }
+    return mySlackMessages;
   }
 
   @Nullable
@@ -91,10 +95,12 @@ public class TunaProjectComponent implements ProjectComponent, PersistentStateCo
     ApplicationManager.getApplication().executeOnPooledThread(() -> {
       try {
         mySlackSession.connect();
+        mySlackMessages = new SlackMessages(mySlackSession);
       }
       catch (IOException e) {
         LOG.error(e);
         mySlackSession = null;
+        mySlackMessages = null;
       }
     });
   }
@@ -110,5 +116,6 @@ public class TunaProjectComponent implements ProjectComponent, PersistentStateCo
       }
     });
     mySlackSession = null;
+    mySlackMessages = null;
   }
 }
