@@ -37,9 +37,8 @@ class SendMessageDialog(private val project: Project,
 
   override fun createCenterPanel(): JComponent? {
     return panel {
-      codeSnippetTextField?.let { row { it(CCFlags.grow, CCFlags.push) } }
       row { messageField(CCFlags.grow, CCFlags.push) }
-      row { receiverName(CCFlags.pushX) }
+      codeSnippetTextField?.let { row { it(CCFlags.grow, CCFlags.push) } }
     }
   }
 
