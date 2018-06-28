@@ -110,7 +110,8 @@ class TunaNotificationManager(private val project: Project) {
     private fun addNotification(notification: TunaNotification) {
         val isActive = ApplicationManager.getApplication().isActive
         if (!isActive) {
-            TunaProjectComponent.getInstance(project).slackMessages?.sendMessageToCurrentUser(notification.title, asBot = true)
+            TunaProjectComponent.getInstance(project).slackMessages?.
+                    sendMessageToCurrentUser("Project '${project.name}': ${notification.title}", asBot = true)
         }
     }
 }
