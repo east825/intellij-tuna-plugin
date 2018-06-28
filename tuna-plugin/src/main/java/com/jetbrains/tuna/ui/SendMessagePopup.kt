@@ -55,8 +55,8 @@ class SendMessagePopup(private val project: Project,
     myBalloon.setMinimumSize(Dimension(300, 50))
   }
 
-  fun showInFocusCenter() {
-    myBalloon.showInFocusCenter()
+  fun showInBestPositionForEditor() {
+    myBalloon.showInBestPositionFor(editor)
   }
 
   inner class SendAction : AbstractAction("Send to Slack") {

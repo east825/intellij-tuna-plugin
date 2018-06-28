@@ -49,7 +49,7 @@ class GotoSlackUserAction : GotoActionBase() {
         val sendMessagePopup = SendMessagePopup(project, element, editor)
 
         ApplicationManager.getApplication().invokeLater {
-          sendMessagePopup.showInFocusCenter()
+          sendMessagePopup.showInBestPositionForEditor()
         }
       }
     }, null, popup)
