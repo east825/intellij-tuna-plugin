@@ -11,12 +11,23 @@ import com.intellij.openapi.compiler.CompilerManager
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vcs.BranchChangeListener
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.LinkedBlockingQueue
+import java.util.concurrent.ThreadPoolExecutor
+import java.util.concurrent.TimeUnit
 
 
 data class TunaNotification(val title: String, val text: String)
 
 class TunaNotificationManager(private val project: Project) {
-    var notificationsShown: MutableList<TunaNotification> = mutableListOf()
+    @Volatile
+    var prevIndexingStart: Long = -1L
+    @Volatile
+    var prevIndexingFinish: Long = -1L
+    val indexingPause: Long = 2000
+    var executorService: ExecutorService = ThreadPoolExecutor(1, 1, 0L,
+            TimeUnit.MILLISECONDS, LinkedBlockingQueue<Runnable>())
+
 
     fun initProjectListeners() {
         val connection = project.messageBus.connect()
@@ -41,11 +52,33 @@ class TunaNotificationManager(private val project: Project) {
         // Indexing
         connection.subscribe(DumbService.DUMB_MODE, object : DumbService.DumbModeListener {
             override fun enteredDumbMode() {
-                addNotification(TunaNotification("Indexing Started", ""))
+                val currentTime = System.currentTimeMillis()
+                if (prevIndexingStart < 0L) {
+                    sendFirstStart(TunaNotification("Indexing Started", ""))
+                }
+                prevIndexingStart = currentTime
+                if (!(prevIndexingStart > prevIndexingFinish && (prevIndexingStart - prevIndexingFinish) < indexingPause)) {
+                    addNotification(TunaNotification("Indexing Started", ""))
+                }
             }
 
             override fun exitDumbMode() {
-                addNotification(TunaNotification("Indexing Finished", ""))
+                val currentTime = System.currentTimeMillis()
+                if (prevIndexingStart < 0L) return
+                prevIndexingFinish = currentTime
+                executorService.execute({
+                    try {
+                        TimeUnit.MILLISECONDS.sleep(indexingPause)
+                        if (!(prevIndexingStart > prevIndexingFinish && (prevIndexingStart - prevIndexingFinish) < indexingPause)) {
+                            if (currentTime >= prevIndexingFinish) {
+                                addNotification(TunaNotification("Indexing Finished", ""))
+                                prevIndexingStart = -1L
+                            }
+                        }
+                    } catch (e: InterruptedException) {
+                    }
+                })
+
             }
         })
 
@@ -54,7 +87,24 @@ class TunaNotificationManager(private val project: Project) {
             addNotification(TunaNotification("Compilation Finished", ""))
             return@CompileTask true
         })
+    }
 
+    private fun sendFirstStart(notification: TunaNotification) {
+        executorService.execute({
+            try {
+                val start = System.currentTimeMillis()
+                var current = System.currentTimeMillis()
+                val tunaProjectComponent = TunaProjectComponent.getInstance(project)
+                while (tunaProjectComponent.slackMessages == null && (current - start) < indexingPause) {
+                    TimeUnit.MILLISECONDS.sleep(100)
+                    current = System.currentTimeMillis()
+                }
+                if (tunaProjectComponent.slackMessages != null) {
+                    addNotification(notification)
+                }
+            } catch (e: InterruptedException) {
+            }
+        })
     }
 
     private fun addNotification(notification: TunaNotification) {
