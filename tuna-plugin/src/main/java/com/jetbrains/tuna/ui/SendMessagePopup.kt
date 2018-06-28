@@ -31,7 +31,7 @@ class SendMessagePopup(private val project: Project,
           sendButton(pushX)
         }
       }
-    }.apply { border = EmptyBorder(10, 10, 10, 10) }
+    }.apply { border = EmptyBorder(10, 10, 0, 10) }
 
     myBalloon = JBPopupFactory.getInstance().createComponentPopupBuilder(panel, sendMessagePanel.preferableFocusComponent)
       .setProject(project)
