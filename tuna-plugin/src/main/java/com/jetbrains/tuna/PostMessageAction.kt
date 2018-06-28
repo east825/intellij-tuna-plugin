@@ -7,14 +7,11 @@ import com.intellij.openapi.ui.Messages
 
 class PostMessageAction : AnAction() {
   override fun actionPerformed(e: AnActionEvent) {
-    val message = Messages.showInputDialog(e.project, "Enter message", "Enter message", null)
+    val message = Messages.showInputDialog(e.project, "Enter message", "Enter message", null).orEmpty()
     val tuna = e.project!!.getComponent(TunaProjectComponent::class.java)
-    val session = tuna.slackSession ?: return
+    val session = tuna.slackMessages ?: return
     ApplicationManager.getApplication().executeOnPooledThread {
-      val user = session.findUserByUserName("qsolo825")
-      if (user != null) {
-        session.sendMessageToUser(user, message, null)
-      }
+      session.sendMessageToCurrentUser(message, asBot = false)
     }
   }
 }
