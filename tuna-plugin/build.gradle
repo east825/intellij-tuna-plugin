@@ -1,14 +1,14 @@
 buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.50"
-    }
+  repositories {
+    mavenCentral()
+  }
+  dependencies {
+    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.50"
+  }
 }
 
 plugins {
-    id "org.jetbrains.intellij" version "0.3.4"
+  id "org.jetbrains.intellij" version "0.3.4"
 }
 
 apply plugin: 'idea'
@@ -28,7 +28,8 @@ compileKotlin {
 }
 
 intellij {
-    version 'IC-2018.1.5'
+  version 'IC-2018.1.5'
+  updateSinceUntilBuild false
 }
 
 publishPlugin {
@@ -37,16 +38,16 @@ publishPlugin {
 }
 
 group 'org.jetbrains'
-version '0.2' // Plugin version
+version '0.3' // Plugin version
 
 repositories {
-    mavenCentral()
-    maven { url 'https://jitpack.io' }
+  mavenCentral()
+  maven { url 'https://jitpack.io' }
 }
 
 dependencies {
-    def withoutSlf4j = { exclude group: 'org.slf4j', module: 'slf4j-api' }
+  def withoutSlf4j = { exclude group: 'org.slf4j', module: 'slf4j-api' }
 
-    // see https://github.com/Ullink/simple-slack-api
-    compile 'com.github.Ullink:simple-slack-api:1.2.0', withoutSlf4j
+  // see https://github.com/Ullink/simple-slack-api
+  compile 'com.github.Ullink:simple-slack-api:1.2.0', withoutSlf4j
 }

@@ -1,14 +1,17 @@
 <idea-plugin>
   <id>com.jetbrains.tuna-plugin</id>
-  <version>0.2</version>
+  <version>0.3</version>
   <name>TUNA</name>
   <vendor email="mikhail.ġolubev@jetbrains.com" url="http://www.jetbrains.com">JetBrains</vendor>
 
   <description>
-    <![CDATA[  <h3>Terrific Unified Notification Apparatus</h3>
-        <p>Simplistic tool for integration with Slack from JetBrains IDEs.</p>
-        ]]>
+    <![CDATA[
+      <h3>Terrific Unified Notification Apparatus</h3>
+      <p>Simplistic tool for integration with Slack from JetBrains IDEs.</p>
+    ]]>
   </description>
+
+  <idea-version since-build="181.0" until-build="181.*"/>
 
   <depends>com.intellij.modules.lang</depends>
 
