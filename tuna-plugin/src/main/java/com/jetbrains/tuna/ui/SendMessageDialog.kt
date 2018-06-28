@@ -27,7 +27,7 @@ class SendMessageDialog(private val project: Project,
     receiverName.isEnabled = false
 
     val document = editor.document
-    val codeSnippet = editor.selectionModel.selectedText ?: document.text
+    val codeSnippet = editor.selectionModel.selectedText?.let { removeCommonIndent(it) } ?: document.text
     val psiFile = PsiDocumentManager.getInstance(project).getPsiFile(document)
 
     codeSnippetTextField = createCodeSnippetTextField(project, codeSnippet, psiFile?.language ?: PlainTextLanguage.INSTANCE)
@@ -48,5 +48,20 @@ class SendMessageDialog(private val project: Project,
     slackMessages?.postMessageWithCodeSnippet(slackUser, messageField.text, codeSnippetTextField?.text ?: "")
 
     super.doOKAction()
+  }
+
+  private fun removeCommonIndent(text: String): String {
+    // TODO Handle mixed tabs and spaces
+    val indentPattern = "^([ \t]*).*".toPattern()
+    val commonIndentSize = text
+                             .lines()
+                             .filter { it.isNotEmpty() }
+                             .map { indentPattern.matcher(it) }
+                             .map { if (it.matches()) it.toMatchResult().group(1).length else 0 }
+                             .min() ?: 0
+
+    return text
+      .lines()
+      .joinToString("\n") { if (it.isEmpty()) it else it.substring(commonIndentSize) }
   }
 }
