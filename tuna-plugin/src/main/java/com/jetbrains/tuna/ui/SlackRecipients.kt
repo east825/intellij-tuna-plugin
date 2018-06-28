@@ -8,7 +8,7 @@ interface SlackRecipient
 const val SLACK_USER_PREFIX = "@"
 const val SLACK_CHANNEL_PREFIX = "#"
 
-class SlackUserRecipient(private val slackUser: SlackUser) : SlackRecipient {
+class SlackUserRecipient(val slackUser: SlackUser) : SlackRecipient {
   override fun toString(): String = SLACK_USER_PREFIX + slackUser.userName
 
   override fun equals(other: Any?): Boolean {
