@@ -6,6 +6,8 @@ import com.intellij.execution.ExecutionManager
 import com.intellij.execution.process.ProcessHandler
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.compiler.CompileTask
+import com.intellij.openapi.compiler.CompilerManager
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vcs.BranchChangeListener
@@ -39,13 +41,20 @@ class TunaNotificationManager(private val project: Project) {
         // Indexing
         connection.subscribe(DumbService.DUMB_MODE, object : DumbService.DumbModeListener {
             override fun enteredDumbMode() {
-                addNotification(TunaNotification("Indexing started", ""))
+                addNotification(TunaNotification("Indexing Started", ""))
             }
 
             override fun exitDumbMode() {
-                addNotification(TunaNotification("Indexing finished", ""))
+                addNotification(TunaNotification("Indexing Finished", ""))
             }
         })
+
+        // Compilation and rebuild
+        CompilerManager.getInstance(project).addAfterTask(CompileTask { context ->
+            addNotification(TunaNotification("Compilation Finished", ""))
+            return@CompileTask true
+        })
+
     }
 
     private fun addNotification(notification: TunaNotification) {
