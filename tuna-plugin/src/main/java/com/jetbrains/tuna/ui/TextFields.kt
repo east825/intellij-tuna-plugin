@@ -27,16 +27,13 @@ fun createCodeSnippetTextField(project: Project, text: String, language: Languag
       editor.contentComponent.border = CompoundBorder(editor.contentComponent.border, JBUI.Borders.emptyLeft(2))
       return editor
     }
-
-    override fun getPreferredSize(): Dimension {
-      return Dimension(600, 400)
-    }
-  }
+  }.apply { maximumSize = Dimension(Integer.MAX_VALUE, 400) }
 }
 
 fun createMessageTextField(project: Project): EditorTextField {
   val features = hashSetOf<EditorCustomization>()
   features.add(SoftWrapsEditorCustomization.ENABLED)
+  features.add(WrapWhenTypingReachesRightMarginCustomization.ENABLED)
   val textField = EditorTextFieldProvider.getInstance().getEditorField(FileTypes.PLAIN_TEXT.language, project, features)
   TextFieldWithAutoCompletion.installCompletion(textField.document, project, SlackRecipientProvider(project), false)
   return textField
