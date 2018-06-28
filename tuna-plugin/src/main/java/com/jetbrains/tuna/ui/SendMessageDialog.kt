@@ -25,7 +25,7 @@ class SendMessageDialog(private val project: Project,
     }
 
     codeSnippetTextField = codeSnippet?.let {
-      createCodeSnippetTextField(project)
+      createCodeSnippetTextField(project, codeSnippet)
     }?.apply { text = codeSnippet.editor.document.text }
 
     init()
