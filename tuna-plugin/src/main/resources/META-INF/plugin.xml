@@ -1,34 +1,33 @@
 <idea-plugin>
-    <id>com.jetbrains.tuna-plugin</id>
-    <name>TUNA</name>
-    <vendor email="support@yourcompany.com" url="http://www.yourcompany.com">YourCompany</vendor>
+  <id>com.jetbrains.tuna-plugin</id>
+  <version>0.2</version>
+  <name>TUNA</name>
+  <vendor email="mikhail.ġolubev@jetbrains.com" url="http://www.jetbrains.com">JetBrains</vendor>
 
-    <description>
-        Terrific Unified Notification Apparatus
-    </description>
+  <description>
+    <![CDATA[  <h3>Terrific Unified Notification Apparatus</h3>
+        <p>Simplistic tool for integration with Slack from JetBrains IDEs.</p>
+        ]]>
+  </description>
 
-    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
-         on how to target different products -->
-    <!-- uncomment to enable plugin in all products
-    <depends>com.intellij.modules.lang</depends>
-    -->
+  <depends>com.intellij.modules.lang</depends>
 
-    <extensions defaultExtensionNs="com.intellij">
-        <projectConfigurable displayName="TUNA" id="tuna" instance="com.jetbrains.tuna.TunaConfigurable"/>
-    </extensions>
+  <extensions defaultExtensionNs="com.intellij">
+    <projectConfigurable displayName="TUNA" id="tuna" instance="com.jetbrains.tuna.TunaConfigurable"/>
+  </extensions>
 
-    <project-components>
-        <component>
-            <implementation-class>com.jetbrains.tuna.TunaProjectComponent</implementation-class>
-        </component>
-    </project-components>
+  <project-components>
+    <component>
+      <implementation-class>com.jetbrains.tuna.TunaProjectComponent</implementation-class>
+    </component>
+  </project-components>
 
-    <actions>
-        <action id="com.jetbrains.tuna.ui.GotoSlackUserAction" class="com.jetbrains.tuna.ui.GotoSlackUserAction"
-                text="Send message to Slack user"/>
-    </actions>
+  <actions>
+    <action id="com.jetbrains.tuna.ui.GotoSlackUserAction" class="com.jetbrains.tuna.ui.GotoSlackUserAction"
+            text="Send message to Slack user"/>
+  </actions>
 
-    <actions>
-        <action id="tuna.WhatTheCode" class="com.jetbrains.tuna.actions.WhatTheCodeAction" text="What's The Code" icon="/icons/tuna.png"/>
-    </actions>
+  <actions>
+    <action id="tuna.WhatTheCode" class="com.jetbrains.tuna.actions.WhatTheCodeAction" text="What's The Code" icon="/icons/tuna.png"/>
+  </actions>
 </idea-plugin>

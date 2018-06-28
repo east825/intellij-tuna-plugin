@@ -31,8 +31,13 @@ intellij {
     version 'IC-2018.1.5'
 }
 
+publishPlugin {
+  username "${System.env.PLUGIN_USER}"
+  password "${System.env.PLUGIN_PASSWORD}"
+}
+
 group 'org.jetbrains'
-version '0.1' // Plugin version
+version '0.2' // Plugin version
 
 repositories {
     mavenCentral()
