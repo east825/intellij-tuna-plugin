@@ -24,7 +24,10 @@
     </project-components>
 
     <actions>
-        <action id="com.jetbrains.tuna.PostMessageAction" class="com.jetbrains.tuna.PostMessageAction" text="Post message to Slack"/>
+        <action id="com.jetbrains.tuna.PostMessageToYourselfAction" class="com.jetbrains.tuna.PostMessageToYourselfAction"
+                text="Post message to yourself Slack"/>
+        <action id="com.jetbrains.tuna.ui.GotoSlackUserAction" class="com.jetbrains.tuna.ui.GotoSlackUserAction"
+                text="Send message to Slack user"/>
     </actions>
 
     <actions>
