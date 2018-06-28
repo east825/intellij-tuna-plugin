@@ -14,8 +14,9 @@ class SendMessageDialog(private val project: Project,
   private val sendMessagePanel: SendMessagePanel = SendMessagePanel(project, slackUser, editor)
 
   init {
-    init()
     title = "Send to Slack"
+
+    init()
   }
 
   override fun createCenterPanel(): JComponent? {
@@ -36,5 +37,9 @@ class SendMessageDialog(private val project: Project,
     }
 
     super.doOKAction()
+  }
+
+  override fun getPreferredFocusedComponent(): JComponent {
+    return sendMessagePanel.preferableFocusComponent
   }
 }

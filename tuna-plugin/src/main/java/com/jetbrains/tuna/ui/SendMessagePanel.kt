@@ -19,6 +19,9 @@ class SendMessagePanel(project: Project, slackUser: SlackUser?, editor: Editor)
   private val messageField: EditorTextField = createMessageTextField(project)
   private val slackUserField: JBTextField = JBTextField(slackUser?.userName ?: "").apply { isEditable = false }
 
+  val preferableFocusComponent: JComponent
+    get() = messageField
+
   init {
     if (editor.selectionModel.hasSelection()) {
 
