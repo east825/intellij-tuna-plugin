@@ -26,7 +26,8 @@
   </project-components>
 
   <actions>
-    <action id="com.jetbrains.tuna.ui.GotoSlackUserAction" class="com.jetbrains.tuna.ui.GotoSlackUserAction"
-            text="Send message to Slack user"/>
+    <action id="com.jetbrains.tuna.ui.GotoSlackUserAction" class="com.jetbrains.tuna.ui.GotoSlackUserAction" text="Send to Slack">
+      <keyboard-shortcut keymap="$default" first-keystroke="ctrl shift S"/>
+    </action>
   </actions>
 </idea-plugin>
