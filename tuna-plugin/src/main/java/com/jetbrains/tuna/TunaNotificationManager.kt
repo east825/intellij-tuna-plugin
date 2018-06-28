@@ -5,6 +5,7 @@ import com.intellij.execution.ExecutionListener
 import com.intellij.execution.ExecutionManager
 import com.intellij.execution.process.ProcessHandler
 import com.intellij.execution.runners.ExecutionEnvironment
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vcs.BranchChangeListener
@@ -21,7 +22,7 @@ class TunaNotificationManager(private val project: Project) {
         // Running Run configurations
         connection.subscribe(ExecutionManager.EXECUTION_TOPIC, object : ExecutionListener {
             override fun processTerminated(executorId: String, env: ExecutionEnvironment, handler: ProcessHandler, exitCode: Int) {
-                addNotification(TunaNotification("Process $env finished with exit code $exitCode", ""))
+                addNotification(TunaNotification("Process '$env' finished with exit code $exitCode", ""))
             }
         })
 
@@ -31,7 +32,7 @@ class TunaNotificationManager(private val project: Project) {
             }
 
             override fun branchHasChanged(branchName: String) {
-                addNotification(TunaNotification("Branch $branchName checked out", ""))
+                addNotification(TunaNotification("Branch '$branchName' checked out", ""))
             }
         })
 
@@ -48,11 +49,9 @@ class TunaNotificationManager(private val project: Project) {
     }
 
     private fun addNotification(notification: TunaNotification) {
-//        val isActive = ApplicationManager.getApplication().isActive
-        val isActive = false // temporarily disable to simplify testing
+        val isActive = ApplicationManager.getApplication().isActive
         if (!isActive) {
             TunaProjectComponent.getInstance(project).slackMessages?.sendMessageToCurrentUser(notification.title, asBot = true)
         }
-
     }
 }
