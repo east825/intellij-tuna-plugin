@@ -45,11 +45,10 @@ class TunaConfigurable(private val myProject: Project) : Configurable {
           val modality = ModalityState.stateForComponent(myAccessTokenField)
 
           app.executeOnPooledThread {
-            val code = interceptCodeAndRequestToken()
-            if (code != null) {
-              myTunaComponent.restartSession()
+            val token = interceptCodeAndRequestToken()
+            if (token != null) {
               app.invokeLater({
-                                myAccessTokenField.text = code
+                                myAccessTokenField.text = token
                                 // Request focus back to settings dialog
                                 WindowManager.getInstance().getFrame(myProject)?.toFront()
                               }, modality)

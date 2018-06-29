@@ -113,7 +113,7 @@ public class TunaProjectComponent implements ProjectComponent, PersistentStateCo
     }
   }
 
-  public void restartSession() {
+  private void restartSession() {
     if (mySlackSession != null) {
       destroySession();
     }
