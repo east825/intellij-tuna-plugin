@@ -118,16 +118,17 @@ public class TunaProjectComponent implements ProjectComponent, PersistentStateCo
       destroySession();
     }
     mySlackSession = SlackSessionFactory.getSlackSessionBuilder(myConfig.myAccessToken).build();
-    new Task.Backgroundable(myProject, "Initializing Connection with Slack", false) {
+    new Task.Backgroundable(myProject, "Initializing Connection with Slack", true) {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
         try {
           indicator.setText2("Initializing connection");
           mySlackSession.connect();
           mySlackMessages = new SlackMessages(mySlackSession);
-          indicator.setText("Pre-fetching User Icons");
+          indicator.setText("Pre-fetching user icons");
           for (SlackUser user: mySlackSession.getUsers()) {
-            indicator.setText2("Fetching icon for " + user.getUserName());
+            indicator.checkCanceled();
+            indicator.setText2(user.getUserName());
             mySlackMessages.getUserIcon(user.getId());
           }
         }
