@@ -2,7 +2,6 @@ package com.jetbrains.tuna;
 
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
-import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.*;
@@ -10,6 +9,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
+import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.twelvemonkeys.lang.StringUtil;
@@ -59,7 +59,7 @@ public class TunaProjectComponent implements ProjectComponent, PersistentStateCo
   private void showBalloon(Project project) {
     Notification notification = new Notification("Tuna plugin", "Tuna plugin",
             "You are not authorised", NotificationType.WARNING);
-    notification.addAction(new AnAction("Authorise in Slack") {
+    notification.addAction(new DumbAwareAction("Authorise in Slack") {
       @Override
       public void actionPerformed(AnActionEvent e) {
         ShowSettingsUtil.getInstance().showSettingsDialog(project, TunaConfigurable.class);

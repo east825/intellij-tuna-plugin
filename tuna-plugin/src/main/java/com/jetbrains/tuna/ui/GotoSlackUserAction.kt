@@ -9,6 +9,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.progress.ProgressIndicator
+import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.psi.codeStyle.NameUtil
 import com.intellij.ui.ColoredListCellRenderer
@@ -24,7 +25,7 @@ import com.ullink.slack.simpleslackapi.SlackUser
 import javax.swing.JList
 import javax.swing.ListCellRenderer
 
-class GotoSlackUserAction : GotoActionBase() {
+class GotoSlackUserAction : GotoActionBase(), DumbAware {
   override fun gotoActionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
     val component = project.getComponent(TunaProjectComponent::class.java) ?: return
