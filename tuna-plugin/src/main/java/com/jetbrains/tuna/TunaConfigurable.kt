@@ -84,13 +84,13 @@ class TunaConfigurable(private val myProject: Project) : Configurable {
       .map { "${urlEncode(it.key)}=${urlEncode(it.value)}" }
       .joinToString(separator = "&")
 
-    println("Request: $formEncoded")
+    TunaProjectComponent.LOG.debug("Request: $formEncoded")
 
     val response = ClientRequest().post(TunaAppInfo.OAUTH_ACCESS_TOKEN_URL, formEncoded)
 
     val responseContent = response.content().toString(Charsets.UTF_8)
 
-    println("Response: $responseContent")
+    TunaProjectComponent.LOG.debug("Response: $responseContent")
     val json = gson.fromJson(responseContent, JsonElement::class.java).asJsonObject
     return json["access_token"].asString
   }

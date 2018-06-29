@@ -55,7 +55,7 @@ class SlackMessages(val session: SlackSession) {
     handler.waitForReply(5, TimeUnit.SECONDS)
     val reply = handler.reply
     if (!reply.isOk) {
-      println("Failed to open DM to ${user.userName}: ${reply.errorMessage}")
+      TunaProjectComponent.LOG.info("Failed to open DM to ${user.userName}: ${reply.errorMessage}")
     }
     val channel = reply.slackChannel
     session.sendFile(channel, snippet.toByteArray(), fileName, fileName, message)
