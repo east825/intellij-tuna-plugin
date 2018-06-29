@@ -15,7 +15,7 @@
   <!--<depends>com.intellij.modules.lang</depends>-->
 
   <extensions defaultExtensionNs="com.intellij">
-    <projectConfigurable displayName="TUNA" id="tuna" instance="com.jetbrains.tuna.TunaConfigurable"/>
+    <projectConfigurable groupId="tools" displayName="TUNA" id="tuna" instance="com.jetbrains.tuna.TunaConfigurable"/>
   </extensions>
 
   <project-components>
