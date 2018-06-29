@@ -23,7 +23,7 @@ class ServerHandler : SimpleChannelInboundHandler<FullHttpMessage>() {
         codes.set(it.value)
       }
 
-      val message = Unpooled.copiedBuffer("Code accepted. Go back to the IDE.", StandardCharsets.UTF_8)
+      val message = Unpooled.copiedBuffer("Token accepted. Go back to the IDE.", StandardCharsets.UTF_8)
       ctx.writeAndFlush(DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK, message))
     }
   }
