@@ -9,7 +9,7 @@ import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.WindowManager
-import com.intellij.ui.components.JBTextField
+import com.intellij.ui.components.JBPasswordField
 import com.intellij.ui.layout.*
 import com.jetbrains.tuna.oauth.ClientRequest
 import com.jetbrains.tuna.oauth.Server
@@ -21,7 +21,7 @@ import javax.swing.JComponent
 
 class TunaConfigurable(private val myProject: Project) : Configurable {
   private val myTunaComponent = TunaProjectComponent.getInstance(myProject)
-  private val myAccessTokenField = JBTextField()
+  private val myAccessTokenField = JBPasswordField()
 
   @Nls(capitalization = Nls.Capitalization.Title)
   override fun getDisplayName(): String {
