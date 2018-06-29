@@ -7,10 +7,12 @@
     <![CDATA[
       <h3>Terrific Unified Notification Apparatus</h3>
       <p>Simplistic tool for integration with Slack from JetBrains IDEs.</p>
+      <p><b>Note:</b> at the moment this plugin is intended only for internal use at JetBrains.</p>
     ]]>
   </description>
 
-  <depends>com.intellij.modules.lang</depends>
+  <!--Not available for smaller IDEs at the moment-->
+  <!--<depends>com.intellij.modules.lang</depends>-->
 
   <extensions defaultExtensionNs="com.intellij">
     <projectConfigurable displayName="TUNA" id="tuna" instance="com.jetbrains.tuna.TunaConfigurable"/>

@@ -28,7 +28,7 @@ compileKotlin {
 }
 
 intellij {
-  version 'IC-2018.1.5'
+  version 'LATEST-EAP-SNAPSHOT'
 }
 
 publishPlugin {
@@ -37,12 +37,12 @@ publishPlugin {
 }
 
 patchPluginXml {
-  sinceBuild "181.0"
-  untilBuild "181.*"
+  sinceBuild "182.0"
+  untilBuild "182.*"
 }
 
 group 'org.jetbrains'
-version '0.4' // Plugin version
+version '0.5' // Plugin version
 
 repositories {
   mavenCentral()
