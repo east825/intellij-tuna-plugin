@@ -1,15 +1,16 @@
-hackathon18-tuna
-================
+intellij-tuna-plugin
+====================
 
-SSH clone URL: ssh://git@git-hosting.labs.intellij.net/hackathon18-tuna.git
+TUNA (**T**errific **U**nified **N**otification **A**pparatus) is a plugin that provides 
+integration of IntelliJ platform-based IDEs with popular IMs. Primarily for
 
-HTTPS clone URL: https://git-hosting.labs.intellij.net/hackathon18-tuna.git
+* tunneling notification about time-consuming activities such as a test run or
+building a project 
+* hassle-free sending of code snippets and references in project sources to your 
+teammates
 
+But we have more useful features in mind. Stay tuned (no pun intended)!
 
-
-
-
-Develop with pleasure!
 
 
 
